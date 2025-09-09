@@ -1,0 +1,120 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+<!-- HERO -->
+<section class="panel-card mb-4 p-4 p-md-5">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <span class="badge-soft mb-2 d-inline-block">Civic Services Platform</span>
+            <h1 class="display-6 mb-2">Report issues. Stay informed. Strengthen your city.</h1>
+            <p class="lead">
+                A unified portal for residents to log service requests, receive status updates,
+                and access local events and announcements — designed for municipalities across South Africa.
+            </p>
+            <div class="d-flex gap-3 flex-wrap">
+                <a class="btn btn-primary btn-lg" asp-controller="Issues" asp-action="Create">
+                    Report an Issue
+                </a>
+
+                <button type="button" class="btn btn-outline-secondary btn-lg"
+                        data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="Coming soon">
+                    Local Events &amp; Announcements
+                </button>
+
+                <button type="button" class="btn btn-outline-secondary btn-lg"
+                        data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="Coming soon">
+                    Service Request Status
+                </button>
+            </div>
+
+            <div class="d-flex gap-4 mt-4 text-muted small">
+                <div><strong>Transparent SLAs</strong><br />Track acknowledgement &amp; resolution targets</div>
+                <div><strong>Multi-channel</strong><br />Web + mobile-ready workflows</div>
+                <div><strong>Accessible</strong><br />Clear labels &amp; visual feedback</div>
+            </div>
+        </div>
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <!-- Hero image (replace with your own asset) -->
+            <img class="img-fluid rounded-3 shadow-sm"
+                 src="https://images.unsplash.com/photo-1487956382158-bb926046304a?q=80&w=1200&auto=format&fit=crop"
+                 alt="City infrastructure" />
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="panel-card h-100">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="category-chip">Report</span>
+                </div>
+                <h3 class="h5">Fast issue reporting</h3>
+                <p class="mb-0">Submit location, category, and description with optional photos/documents. Smart validation keeps it simple and accurate.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel-card h-100">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="category-chip">Track</span>
+                </div>
+                <h3 class="h5">Transparent status &amp; SLAs</h3>
+                <p class="mb-0">Know when requests are acknowledged and scheduled. Timelines and progress indicators build trust and accountability.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel-card h-100">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="category-chip">Engage</span>
+                </div>
+                <h3 class="h5">Local events &amp; alerts</h3>
+                <p class="mb-0">Stay informed about planned maintenance, community meetings, and announcements tailored to your ward.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VISUAL STRIP -->
+<section class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <img class="img-fluid rounded-3 shadow-sm w-100 h-100 object-fit-cover"
+                 src="https://images.unsplash.com/photo-1605615617340-0ef4b3cd8d93?q=80&w=1200&auto=format&fit=crop"
+                 alt="Road maintenance" />
+        </div>
+        <div class="col-md-6">
+            <img class="img-fluid rounded-3 shadow-sm w-100 h-100 object-fit-cover"
+                 src="https://images.unsplash.com/photo-1545259741-2ea3ebf61fa9?q=80&w=1200&auto=format&fit=crop"
+                 alt="Community engagement" />
+        </div>
+    </div>
+</section>
+
+<!-- STATS / TRUST SIGNALS -->
+<section class="panel-card mb-4">
+    <div class="row text-center">
+        <div class="col-md-3 mb-3 mb-md-0">
+            <h3 class="mb-0">5k+</h3><div class="text-muted">Requests logged</div>
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+            <h3 class="mb-0">92%</h3><div class="text-muted">On-time responses</div>
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+            <h3 class="mb-0">20+</h3><div class="text-muted">Municipal categories</div>
+        </div>
+        <div class="col-md-3">
+            <h3 class="mb-0">4.7★</h3><div class="text-muted">User satisfaction</div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA FOOTER -->
+<section class="panel-card text-center">
+    <h3 class="mb-2">Ready to make a report?</h3>
+    <p class="lead text-muted mb-3">Your input helps maintain safe, reliable municipal services.</p>
+    <a class="btn btn-primary btn-lg" asp-controller="Issues" asp-action="Create">Report an Issue</a>
+</section>

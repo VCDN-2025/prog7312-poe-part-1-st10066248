@@ -1,0 +1,225 @@
+﻿@model MunicipalServicesMvcCore.Models.IssueCreateViewModel
+@{
+    ViewBag.Title = "Report an Issue";
+    var categories = (string[])ViewBag.Categories;
+}
+
+<div class="panel-card p-4 p-md-5">
+    <div class="mb-4" id="engagementGroup">
+        <label class="form-label mb-2">Completion Status: </label>
+        <div class="progress" id="engagementProgress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                 role="progressbar" style="width:0%" aria-valuenow="0"
+                 aria-valuemin="0" aria-valuemax="100">
+                <span class="visually-hidden">0%</span>
+            </div>
+        </div>
+        <small class="text-muted" id="engagementHint">Start filling the form…</small>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <div class="mb-3">
+            <span class="badge-soft mb-2 d-inline-block">Service Request</span>
+            <h2 class="mb-1">Report an Issue</h2>
+            <p class="lead mb-0">Provide the location, choose a category, and describe the problem. Attach a photo or document if helpful.</p>
+        </div>
+
+        <div class="ms-auto align-self-start mb-3" id="completionBlock" style="display:none;">
+            <span class="fw-bold">Completion Status:</span>
+            <span class="text-success" id="completionText">Ready to submit.</span>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"></div>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+  
+    <form asp-action="Create" asp-controller="Issues" method="post" enctype="multipart/form-data" id="issueForm" novalidate>
+        @Html.AntiForgeryToken()
+
+        <div class="row g-4">
+            
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label asp-for="Location" class="form-label">Location</label>
+                    <input asp-for="Location" class="form-control" id="Location"
+                           placeholder="e.g. 12 Radar Road, 4091, Ward 3" />
+                    <small class="form-text text-muted">Include a nearby landmark if possible.</small>
+                    <span class="text-danger" asp-validation-for="Location"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Category" class="form-label">Category</label>
+                    <select asp-for="Category" class="form-select" id="Category"
+                            asp-items="@(new SelectList(categories))">
+                        <option value="">-- Select a category --</option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="Category"></span>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" id="Description" class="form-control" rows="8"
+                              placeholder="Describe the issue, impact, and when it started…"></textarea>
+                    <small class="form-text text-muted">Avoid personal information; focus on the service problem.</small>
+                    <span class="text-danger" asp-validation-for="Description"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Attachments" class="form-label">Attachments</label>
+            <input asp-for="Attachments" id="Attachments" class="form-control" type="file" multiple />
+            <div class="form-text">JPG, PNG, PDF, DOCX, XLSX (optional).</div>
+            
+            <ul id="previewList" class="small mt-2 mb-0"></ul>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <button type="submit" id="btnSubmit" class="btn btn-primary" disabled>Submit</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Back to Main Menu</a>
+        </div>
+
+        <div id="submitProgress" class="progress mt-3" style="display:none;">
+            <div class="progress-bar" role="progressbar" style="width:0%" aria-valuenow="0"
+                 aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function(){
+          const input = document.getElementById('Attachments');
+          const list  = document.getElementById('previewList');
+          function render(){
+            if(!list) return;
+            list.innerHTML = '';
+            const files = input?.files || [];
+            [...files].forEach(f=>{
+              const li = document.createElement('li');
+              li.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
+              list.appendChild(li);
+            });
+          }
+          input?.addEventListener('change', render);
+        })();
+    </script>
+
+    <script>
+        (function () {
+          const form = document.getElementById('issueForm');
+          const loc  = document.getElementById('Location');
+          const cat  = document.getElementById('Category');
+          const desc = document.getElementById('Description');
+          const att  = document.getElementById('Attachments');
+
+          const engagementGroup = document.getElementById('engagementGroup');
+          const barC = document.getElementById('engagementProgress');
+          const bar  = barC.querySelector('.progress-bar');
+          const hint = document.getElementById('engagementHint');
+
+          const completionBlock = document.getElementById('completionBlock');
+          const submitBtn = document.getElementById('btnSubmit');
+
+          const MIN_LOC_LEN  = 5;
+          const MIN_DESC_LEN = 15;
+
+          function score() {
+            let total = 0;
+            if ((loc?.value || "").trim().length >= MIN_LOC_LEN) total += 30;
+            if ((cat?.value || "").length > 0) total += 30;
+            if ((desc?.value || "").trim().length >= MIN_DESC_LEN) total += 40;
+            if ((att?.files?.length || 0) > 0) total += 10;
+            return Math.min(100, total);
+          }
+
+          function isComplete() {
+            const hasLocation = (loc?.value || "").trim().length >= MIN_LOC_LEN;
+            const hasCategory = !!(cat?.value || "");
+            const hasDesc     = (desc?.value || "").trim().length >= MIN_DESC_LEN;
+            return hasLocation && hasCategory && hasDesc;
+          }
+
+          function updateUi() {
+            const pct = score();
+            const complete = isComplete();
+
+            bar.style.width = pct + '%';
+            bar.setAttribute('aria-valuenow', pct);
+            bar.querySelector('.visually-hidden').textContent = pct + '%';
+            bar.classList.remove('bg-danger','bg-warning','bg-success');
+            if (pct < 40) bar.classList.add('bg-danger');
+            else if (pct < 80) bar.classList.add('bg-warning');
+            else bar.classList.add('bg-success');
+
+            hint.textContent =
+              pct === 0 ? 'Begin Entering Information About The Issue…' :
+              pct < 40  ? 'Keep going—add Location, Category, and Description.' :
+              pct < 80  ? 'Great! Tell Give Us More Details and/or add An Attachment.' :
+              pct < 100 ? 'Almost there—review and complete.' : 'Complete.';
+
+          
+            engagementGroup.style.display = complete ? 'none' : 'block';
+            completionBlock.style.display = complete ? 'block' : 'none';
+            submitBtn.disabled = !complete;
+          }
+
+          ['input','change'].forEach(evt => {
+            loc?.addEventListener(evt, updateUi);
+            cat?.addEventListener(evt, updateUi);
+            desc?.addEventListener(evt, updateUi);
+            att?.addEventListener(evt, updateUi);
+          });
+
+          updateUi();
+        })();
+    </script>
+
+    <script>
+        (function(){
+          const form = document.getElementById('issueForm');
+          const btn  = document.getElementById('btnSubmit');
+          const barC = document.getElementById('submitProgress');
+          const bar  = barC.querySelector('.progress-bar');
+          let timer;
+
+          function start() {
+            barC.style.display = 'block';
+            let value = 0;
+            bar.style.width = '0%';
+            bar.setAttribute('aria-valuenow', '0');
+            timer = setInterval(() => {
+              value = Math.min(95, value + 3);
+              bar.style.width = value + '%';
+              bar.setAttribute('aria-valuenow', value);
+            }, 120);
+          }
+          function stop() {
+            clearInterval(timer);
+            bar.style.width = '100%';
+            bar.setAttribute('aria-valuenow', '100');
+            setTimeout(() => {
+              barC.style.display = 'none';
+              bar.style.width = '0%';
+              bar.setAttribute('aria-valuenow', '0');
+            }, 400);
+          }
+          form.addEventListener('submit', function(){ start(); });
+          window.addEventListener('pageshow', function(){ stop(); });
+        })();
+    </script>
+}

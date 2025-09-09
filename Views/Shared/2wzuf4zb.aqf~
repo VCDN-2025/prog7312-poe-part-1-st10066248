@@ -1,0 +1,173 @@
+﻿@{
+    var appName = "Municipal Services";
+    var title = ViewBag.Title ?? "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+        }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@appName - @title</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        .container {
+            max-width: 980px;
+        }
+
+        .menu-card {
+            padding: 24px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .disabled-link {
+            pointer-events: none;
+            opacity: .55;
+        }
+
+        .progress {
+            height: 8px;
+            margin-top: 6px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                <img src="~/img/municipal-logo-horizontal.svg"
+                     alt="Municipal Services" height="40"
+                     onerror="this.onerror=null;this.src='/img/municipal-logo-horizontal.png';" />
+              
+            </a>
+
+            <!-- Mobile toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Links -->
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-2">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Issues" asp-action="Create">Track an Issue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" tabindex="-1" aria-disabled="true"
+                           data-bs-toggle="tooltip" data-bs-placement="bottom" title="Coming soon">
+                            Events &amp; Announcements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" tabindex="-1" aria-disabled="true"
+                           data-bs-toggle="tooltip" data-bs-placement="bottom" title="Coming soon">
+                            Request Status
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Right side -->
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                    <!-- Language -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-translate"></i> Language
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">English</a></li>
+                            <li><a class="dropdown-item" href="#">isiZulu</a></li>
+                            <li><a class="dropdown-item" href="#">isiXhosa</a></li>
+                            <li><a class="dropdown-item" href="#">Afrikaans</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Help / About -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-question-circle"></i> Help
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" asp-controller="Home" asp-action="About">About</a></li>
+                            <li><a class="dropdown-item" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                            <li><a class="dropdown-item" href="#">FAQ</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Theme toggle -->
+                    <li class="nav-item">
+                        <button class="btn btn-sm btn-outline-light d-flex align-items-center gap-2" id="themeToggle" type="button">
+                            <i class="bi bi-moon-stars" id="themeIcon"></i>
+                            <span class="d-none d-xl-inline">Theme</span>
+                        </button>
+                    </li>
+
+                    <!-- CTA -->
+                    <li class="nav-item ms-lg-2">
+                        <a asp-controller="Issues" asp-action="Create" class="btn btn-accent">
+                            Report Issue
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <main class="container my-4">
+        @RenderBody()
+        <hr />
+        <footer class="text-muted small">
+            &copy; @DateTime.Now.Year - @appName
+        </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+    <script>
+        // Enable tooltips
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+
+        // Simple theme toggle (adds/removes .theme-dark on <body>)
+        (function(){
+          const btn  = document.getElementById('themeToggle');
+          const icon = document.getElementById('themeIcon');
+          const KEY  = 'ms_theme';
+          const apply = (dark) => {
+            document.body.classList.toggle('theme-dark', dark);
+            icon.className = dark ? 'bi bi-sun' : 'bi bi-moon-stars';
+            localStorage.setItem(KEY, dark ? 'dark' : 'light');
+          };
+          // load preference
+          apply(localStorage.getItem(KEY) === 'dark');
+          btn?.addEventListener('click', () => apply(!document.body.classList.contains('theme-dark')));
+        })();
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
